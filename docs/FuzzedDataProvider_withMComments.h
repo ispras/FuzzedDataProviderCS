@@ -71,7 +71,8 @@ class FuzzedDataProvider {
   // Returns a value chosen from the given enum.
   template <typename T> T ConsumeEnum();
 
-  // Returns a value from the given array.
+ //### С ЭТИМ РАЗОБРАТЬСЯ ПОДРОБНЕЕ
+ // Returns a value from the given array.
   template <typename T, size_t size> T PickValueInArray(const T (&array)[size]);
   template <typename T, size_t size>
   T PickValueInArray(const std::array<T, size> &array);
@@ -84,6 +85,7 @@ class FuzzedDataProvider {
   size_t remaining_bytes() { return remaining_bytes_; }
 
  private:
+  //### НЕОБХОДИМОСТЬ ЭТОГО КОДА ПОД ВОПРОСОМ
   FuzzedDataProvider(const FuzzedDataProvider &) = delete;
   FuzzedDataProvider &operator=(const FuzzedDataProvider &) = delete;
 
@@ -106,7 +108,7 @@ class FuzzedDataProvider {
 // char, unsigned char, uint8_t, etc.
 template <typename T>
 std::vector<T> FuzzedDataProvider::ConsumeBytes(size_t num_bytes) {
-  num_bytes = std::min(num_bytes, remaining_bytes_);
+  num_bytes = std::min(num_bytes, remaining_bytes_);  //### std::min - Returns the smaller of the given values. Use Math.Min 
   return ConsumeBytes<T>(num_bytes, num_bytes);
 }
 
@@ -172,7 +174,7 @@ FuzzedDataProvider::ConsumeRandomLengthString(size_t max_length) {
     result += next;
   }
 
-  result.shrink_to_fit();
+  result.shrink_to_fit(); //## Requests the removal of unused capacity.
   return result;
 }
 
@@ -327,7 +329,7 @@ T FuzzedDataProvider::PickValueInArray(std::initializer_list<const T> list) {
 // in cases when it's necessary to fill a certain buffer or object with
 // fuzzing data.
 inline size_t FuzzedDataProvider::ConsumeData(void *destination,
-                                              size_t num_bytes) {
+                                              size_t num_bytes) {  //## Своего рода аналог ConsumeBytes, однако пишет непосредственно по указателю, а не возвращает вектор.
   num_bytes = std::min(num_bytes, remaining_bytes_);
   CopyAndAdvance(destination, num_bytes);
   return num_bytes;
@@ -336,12 +338,12 @@ inline size_t FuzzedDataProvider::ConsumeData(void *destination,
 // Private methods.
 inline void FuzzedDataProvider::CopyAndAdvance(void *destination,
                                                size_t num_bytes) {
-  std::memcpy(destination, data_ptr_, num_bytes);
+  std::memcpy(destination, data_ptr_, num_bytes);  //## Очень важная функция - "выкопирует" данные требуемой длины для дальнейшего парсинга. 
   Advance(num_bytes);
 }
 
 inline void FuzzedDataProvider::Advance(size_t num_bytes) {
-  if (num_bytes > remaining_bytes_)
+  if (num_bytes > remaining_bytes_)  //## Данная функция сдвигает точку "выкопирования" - своего рода сдвиг offset. 
     abort();
 
   data_ptr_ += num_bytes;
@@ -349,8 +351,8 @@ inline void FuzzedDataProvider::Advance(size_t num_bytes) {
 }
 
 template <typename T>
-std::vector<T> FuzzedDataProvider::ConsumeBytes(size_t size, size_t num_bytes) {
-  static_assert(sizeof(T) == sizeof(uint8_t), "Incompatible data type.");
+std::vector<T> FuzzedDataProvider::ConsumeBytes(size_t size, size_t num_bytes) {  //## Собственно вызов функции "выкопирования"
+  static_assert(sizeof(T) == sizeof(uint8_t), "Incompatible data type."); //## ПРОВЕРКА ВРЕМЕНИ КОМПИЛЯЦИИ
 
   // The point of using the size-based constructor below is to increase the
   // odds of having a vector object with capacity being equal to the length.
@@ -370,13 +372,13 @@ std::vector<T> FuzzedDataProvider::ConsumeBytes(size_t size, size_t num_bytes) {
   // Even though |shrink_to_fit| is also implementation specific, we expect it
   // to provide an additional assurance in case vector's constructor allocated
   // a buffer which is larger than the actual amount of data we put inside it.
-  result.shrink_to_fit();
+  result.shrink_to_fit();  //## Requests the removal of unused capacity - сжатие излишне выделенного буффера под новый чанк. Вероятно не нужно в C#
   return result;
 }
 
 template <typename TS, typename TU>
 TS FuzzedDataProvider::ConvertUnsignedToSigned(TU value) {
-  static_assert(sizeof(TS) == sizeof(TU), "Incompatible data types.");
+  static_assert(sizeof(TS) == sizeof(TU), "Incompatible data types."); //## Проверка совпадения размерности типов при signed-cast
   static_assert(!std::numeric_limits<TU>::is_signed,
                 "Source type must be unsigned.");
 
@@ -384,7 +386,7 @@ TS FuzzedDataProvider::ConvertUnsignedToSigned(TU value) {
   if (std::numeric_limits<TS>::is_modulo)
     return static_cast<TS>(value);
 
-  // Avoid using implementation-defined unsigned to signed conversions.
+  // Avoid using implementation-defined unsigned to signed conversions.  //## Предположительно неактуально для C#
   // To learn more, see https://stackoverflow.com/questions/13150449.
   if (value <= std::numeric_limits<TS>::max()) {
     return static_cast<TS>(value);
