@@ -11,8 +11,9 @@ namespace FuzzedDataProviderCSTest
         [TestMethod]
         public void TestReturnedString()
         {
-            Assert.AreEqual(FuzzedDataProviderCSLibrary.FuzzedDataProviderCSLibrary.WriteLine(), "HelloWorld");
-            Assert.AreEqual((new FuzzedDataProviderCSLibrary.FuzzedDataProviderCSLibrary()).RetOne(), 1);
+            var fdp = new FuzzedDataProviderCSLibrary.FuzzedDataProviderCS(x,3,s);
+            fdp.InsufficientData
+            
         }
     }
 }
