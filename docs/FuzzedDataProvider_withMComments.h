@@ -151,7 +151,7 @@ inline std::string FuzzedDataProvider::ConsumeBytesAsString(size_t num_bytes) {
 // with respect to a fuzzer inserting characters than just picking a random
 // length and then consuming that many bytes with |ConsumeBytes|.
 inline std::string
-FuzzedDataProvider::ConsumeRandomLengthString(size_t max_length) {
+FuzzedDataProvider::ConsumeRandomLengthString(size_t max_length) {   //## Получение строки произвольной длины. Длина определяется не на основе каких-то байт в качестве значения переменной длины, но до первого символа /. Я буду делать по другому - 4 байта на переменную длины, значение их деления по модулю max_length даст в итоге реальную длину. Таким образом полученный от фаззера массив будет представлять собой самодокументированную структуру.
   // Reads bytes from the start of |data_ptr_|. Maps "\\" to "\", and maps "\"
   // followed by anything else to the end of the string. As a result of this
   // logic, a fuzzer can insert characters into the string, and the string
