@@ -1,4 +1,7 @@
-﻿namespace FuzzedDataProviderCSLibrary
+﻿using System;
+using System.Buffers.Binary;
+
+namespace FuzzedDataProviderCSLibrary
 {
     /// <summary>
     /// The goal of this class is to split fuzzed data in chunks in predictable manner.    
@@ -8,19 +11,27 @@
     /// </returns>
     public class FuzzedDataProviderCS
     {
-        private char[] _data;
+        private byte[] _data;
         private int _length;
+        private int _offset = 0;
         private bool _exitAppOnInsufficientData;
-
+        private bool _insufficientData = false;
+        
         /// <param name="exitAppOnInsufficientData">
         /// If set to true, the fuzzing iteration will be finished when the fuzzed data is over.
         /// </param>
-        public FuzzedDataProviderCS(char[] data, int length, bool exitAppOnInsufficientData = false)
+        public FuzzedDataProviderCS(byte[] data, bool exitAppOnInsufficientData = false)
         {
             _data = data;
-            _length = length;
+            _length = data.Length;
             _exitAppOnInsufficientData = exitAppOnInsufficientData;
+            _insufficientData = _length < 1;
         }
+
+        public static bool IsLittleEndian
+        {            
+            get => BitConverter.IsLittleEndian;
+        } 
 
         /// <summary>
         /// This property tells you if fuzzed data is over, also finishes the fuzzing iteration if exitAppOnInsufficientData is True.        
@@ -30,12 +41,12 @@
         /// </returns>
         public bool InsufficientData
         {
-            get => InsufficientData;
+            get => _insufficientData;
             private set
             {
-                InsufficientData = value;
-                if (_exitAppOnInsufficientData && InsufficientData)
-                    System.Environment.Exit(0);
+                _insufficientData = value;
+                if (_exitAppOnInsufficientData && _insufficientData)
+                    Environment.Exit(0);
             }
         }
 
@@ -48,8 +59,16 @@
         /// <returns>
         /// Returns false in case of insufficient data for the next advance, otherwise true.
         /// </returns>
-        private bool Check(int step) =>
-            _length + step >= _data.Length ? false : true;
+        private bool CheckIfEnoughData(int step)
+        {
+            if (_offset + step > _data.Length)
+            {
+                InsufficientData = true;
+                return false;
+            }
+            else
+                return true;
+        }
 
         /// <summary>
         /// Moves pointer forth and set InsufficientData to True when reaches the end of the data.
@@ -57,19 +76,59 @@
         /// <param name="step">
         /// Step of the splitting pointer (in chars).
         /// </param>        
-        private void Advance(int step)
+        private void Advance(int step) =>
+            _offset += step;
+
+        public Int32 ConsumeInt32(Int32 min = Int32.MinValue, Int32 max = Int32.MaxValue)
         {
-            _length += step;
-            if (_length >= _data.Length)
-                InsufficientData = true;
+            Int32 result;
+            int step = sizeof(Int32);
+            if (CheckIfEnoughData(step))
+            {
+                var toBeConverted = _data.AsSpan(_offset, step);
+                result = IsLittleEndian ?
+                    BinaryPrimitives.ReadInt32BigEndian(toBeConverted) :
+                    BinaryPrimitives.ReadInt32LittleEndian(toBeConverted);
+            }
+            else
+            {
+                Span<byte> toBeConverted = stackalloc byte[step];
+                toBeConverted.Fill(0x00);
+                _data.AsSpan(_offset).CopyTo(toBeConverted);
+                result = IsLittleEndian ?
+                    BinaryPrimitives.ReadInt32BigEndian(toBeConverted) :
+                    BinaryPrimitives.ReadInt32LittleEndian(toBeConverted);
+            }
+            Advance(step);
+            if (min != Int32.MinValue || max != Int32.MaxValue)
+                result = Math.Abs(result % (max - min + 1)) + min;
+            return result;
         }
 
-        public T ConsumeSimpleType<T>()
+        public UInt32 ConsumeUInt32(UInt32 min = UInt32.MinValue, UInt32 max = UInt32.MaxValue)
         {
-            https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/value-types
-            https://stackoverflow.com/questions/828807/what-is-the-base-class-for-c-sharp-numeric-value-types
-            var t = typeof(T);
-            return (T)t;
-        }
-    }
+            UInt32 result;
+            int step = sizeof(UInt32);
+            if (CheckIfEnoughData(step))
+            {
+                var toBeConverted = _data.AsSpan(_offset, step);
+                result = IsLittleEndian ?
+                    BinaryPrimitives.ReadUInt32BigEndian(toBeConverted) :
+                    BinaryPrimitives.ReadUInt32LittleEndian(toBeConverted);
+            }
+            else
+            {
+                Span<byte> toBeConverted = stackalloc byte[step];
+                toBeConverted.Fill(0x00);
+                _data.AsSpan(_offset).CopyTo(toBeConverted);
+                result = IsLittleEndian ?
+                    BinaryPrimitives.ReadUInt32BigEndian(toBeConverted) :
+                    BinaryPrimitives.ReadUInt32LittleEndian(toBeConverted);
+            }
+            Advance(step);
+            if (min != UInt32.MinValue || max != UInt32.MaxValue)
+                result = result % (max - min + 1) + min;
+            return result;
+        }    
+    }  
 }
