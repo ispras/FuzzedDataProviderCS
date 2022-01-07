@@ -3,7 +3,7 @@ FuzzedDataProvider for C#, inspired by Google's FuzzedDataProvider. Look at:
 - common description and the conception of Structure Aware Fuzzing  https://github.com/google/fuzzing/blob/master/docs/split-inputs.md#fuzzed-data-provider
 - source code https://github.com/llvm-mirror/compiler-rt/blob/master/include/fuzzer/FuzzedDataProvider.h
 - example https://fuchsia.googlesource.com/fuchsia/+/dbda4024104e/examples/fuzzers/cpp/fuzzed-data-provider.cc
-- abstract (mostly in Russian)  
+- abstract (mostly in Russian) [Structure_Aware_Fuzzing_and_logical_erros.pdf](Docs/Structure_Aware_Fuzzing_and_logical_erros.pdf) 
 
 Made for using with C#-fuzzers (like https://github.com/Metalnem/sharpfuzz).
 
