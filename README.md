@@ -57,7 +57,37 @@ Also try to restart restart VSCode after rebuild (developed and tested with VSCo
 
 ### HowTo (Example):
 
-You could see a plenty of them in [UnitTest1.cs](FuzzedDataProviderCSTest/UnitTest1.cs)
+The code 
+
+```
+using FuzzedDataProviderCSLibrary;
+
+...
+
+public void TestComplex()
+    {
+        byte[] testArr = { 0x01, 0x02, 0x00, 0x41, 0x00, 0x41, 0x01, 0x02 };
+        
+        var fdp = new FuzzedDataProviderCS(testArr, exitAppOnInsufficientData : false); //Create instance
+        var resultUInt16 = fdp.ConsumeUInt16(); //Consume 2 bytes and convert it to UInt16
+        var resultBytes = fdp.ConsumeBytes(2); //Consume 2 bytes and copy it to Byte[]
+        var resultStr = fdp.ConsumeRemainingAsString(new HashSet<char>() { '\u0043', '\x0044', '\x45' }); //Consume all the remaining data (4 bytes), convert it to string (Unicode), and map all of them into the *Bag of Chars* (a kind of hashing)
+        var resultDT = fdp.ConsumeDateTime(); //The data is over, but because of exitAppOnInsufficientData : false 4 zeroes will be read and coverted to DateTime          
+    }
+
+```
+
+will construct:
+
+
+```
+resultUInt16,h: 0x0102
+resultBytes,h: {byte[0x00000002]} 0x00, 0x41
+resultStr: "EC" //Yeah, the magic of mapping of A'\x41' and Ă'\x0102' to C'\u0043' and E'\x45'
+resultDT: {1/1/0001 12:00:00 AM}
+```
+
+You could see a plenty of usings and results in [UnitTest1.cs](FuzzedDataProviderCSTest/UnitTest1.cs). 
 
 ### Tasks:
 1. Templatize it using Generics/Abstract class.

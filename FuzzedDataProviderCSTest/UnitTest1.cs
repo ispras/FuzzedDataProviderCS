@@ -164,6 +164,9 @@ namespace FuzzedDataProviderCSTest
             result = fdp.ConsumeInt32();
             Assert.AreEqual(768, result);
             Assert.AreEqual(true, fdp.InsufficientData);
+            result = fdp.ConsumeInt32();
+            Assert.AreEqual(0, result);
+            Assert.AreEqual(true, fdp.InsufficientData);
         }
 
         /// <summary>
@@ -527,8 +530,7 @@ namespace FuzzedDataProviderCSTest
         }
 
         [TestMethod]
-        public void TestConsumeDateTime()
-        {
+        public void TestConsumeDateTime()        {
             byte[] testArr0 = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             byte[] testArr1 = { 0x2b, 0xca, 0x28, 0x75, 0xf4, 0x37, 0x3f, 0xff };
             byte[] testArr2 = { 0x7F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
@@ -575,5 +577,7 @@ namespace FuzzedDataProviderCSTest
             Assert.AreEqual(result.Year, 1992);
             Assert.AreEqual(false, fdp.InsufficientData);
         }
+    
+      
     }
 }

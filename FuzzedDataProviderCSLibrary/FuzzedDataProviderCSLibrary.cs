@@ -97,7 +97,8 @@ namespace FuzzedDataProviderCSLibrary
             {
                 Span<byte> toBeConverted = stackalloc byte[step];
                 toBeConverted.Fill(0x00);
-                _data.AsSpan(_offset).CopyTo(toBeConverted);
+                if (_offset < _length)
+                    _data.AsSpan(_offset).CopyTo(toBeConverted);
                 result = IsLittleEndian ?
                     BinaryPrimitives.ReadInt32BigEndian(toBeConverted) :
                     BinaryPrimitives.ReadInt32LittleEndian(toBeConverted);
@@ -123,7 +124,8 @@ namespace FuzzedDataProviderCSLibrary
             {
                 Span<byte> toBeConverted = stackalloc byte[step];
                 toBeConverted.Fill(0x00);
-                _data.AsSpan(_offset).CopyTo(toBeConverted);
+                if (_offset < _length)
+                    _data.AsSpan(_offset).CopyTo(toBeConverted);
                 result = IsLittleEndian ?
                     BinaryPrimitives.ReadUInt32BigEndian(toBeConverted) :
                     BinaryPrimitives.ReadUInt32LittleEndian(toBeConverted);
@@ -149,7 +151,8 @@ namespace FuzzedDataProviderCSLibrary
             {
                 Span<byte> toBeConverted = stackalloc byte[step];
                 toBeConverted.Fill(0x00);
-                _data.AsSpan(_offset).CopyTo(toBeConverted);
+                if (_offset < _length)
+                    _data.AsSpan(_offset).CopyTo(toBeConverted);
                 result = IsLittleEndian ?
                     BinaryPrimitives.ReadInt16BigEndian(toBeConverted) :
                     BinaryPrimitives.ReadInt16LittleEndian(toBeConverted);
@@ -175,7 +178,8 @@ namespace FuzzedDataProviderCSLibrary
             {
                 Span<byte> toBeConverted = stackalloc byte[step];
                 toBeConverted.Fill(0x00);
-                _data.AsSpan(_offset).CopyTo(toBeConverted);
+                if (_offset < _length)
+                    _data.AsSpan(_offset).CopyTo(toBeConverted);
                 result = IsLittleEndian ?
                     BinaryPrimitives.ReadUInt16BigEndian(toBeConverted) :
                     BinaryPrimitives.ReadUInt16LittleEndian(toBeConverted);
@@ -201,7 +205,8 @@ namespace FuzzedDataProviderCSLibrary
             {
                 Span<byte> toBeConverted = stackalloc byte[step];
                 toBeConverted.Fill(0x00);
-                _data.AsSpan(_offset).CopyTo(toBeConverted);
+                if (_offset < _length)
+                    _data.AsSpan(_offset).CopyTo(toBeConverted);
                 result = IsLittleEndian ?
                     BinaryPrimitives.ReadInt64BigEndian(toBeConverted) :
                     BinaryPrimitives.ReadInt64LittleEndian(toBeConverted);
@@ -227,7 +232,8 @@ namespace FuzzedDataProviderCSLibrary
             {
                 Span<byte> toBeConverted = stackalloc byte[step];
                 toBeConverted.Fill(0x00);
-                _data.AsSpan(_offset).CopyTo(toBeConverted);
+                if (_offset < _length)
+                    _data.AsSpan(_offset).CopyTo(toBeConverted);
                 result = IsLittleEndian ?
                     BinaryPrimitives.ReadUInt64BigEndian(toBeConverted) :
                     BinaryPrimitives.ReadUInt64LittleEndian(toBeConverted);
@@ -258,8 +264,9 @@ namespace FuzzedDataProviderCSLibrary
 
             if (CheckIfEnoughData(step))
                 _data.AsSpan(_offset, step).CopyTo(toBeConverted);
-            else
-                _data.AsSpan(_offset).CopyTo(toBeConverted);           
+            else if (_offset < _length)
+                _data.AsSpan(_offset).CopyTo(toBeConverted);
+
             if (IsLittleEndian)
                 Encoding.BigEndianUnicode.GetChars(toBeConverted, result); 
             else            
@@ -344,7 +351,8 @@ namespace FuzzedDataProviderCSLibrary
             {
                 Span<byte> toBeConverted = stackalloc byte[step];
                 toBeConverted.Fill(0x00);
-                _data.AsSpan(_offset).CopyTo(toBeConverted);
+                if (_offset < _length)
+                    _data.AsSpan(_offset).CopyTo(toBeConverted);
                 result = BitConverter.ToDouble(toBeConverted);
             }
             Advance(step);           
