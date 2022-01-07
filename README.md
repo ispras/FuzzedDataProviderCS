@@ -1,4 +1,7 @@
 # FuzzedDataProviderCS
+
+*Made as a part of __Competence Center Community__ activities (Telegram: @sdl_community)*
+
 FuzzedDataProvider for C#, inspired by Google's FuzzedDataProvider. Look at: 
 - common description and the conception of Structure Aware Fuzzing  https://github.com/google/fuzzing/blob/master/docs/split-inputs.md#fuzzed-data-provider
 - source code https://github.com/llvm-mirror/compiler-rt/blob/master/include/fuzzer/FuzzedDataProvider.h
@@ -48,6 +51,7 @@ Also try to restart restart VSCode after rebuild (developed and tested with VSCo
 3. Most of the functions allows you to set a range or a set of possible values. For example:
 - you can instruct the instance to consume an Int32 in a Range [-8; 20359];
 - you can instruct the instance to consume a String where all of the symbols must belong to a Set of ['a', 'B', '8', 'Ă'];
+- etc.
 
 ### HowTo (Example):
 
