@@ -29,7 +29,6 @@ namespace FuzzedDataProviderCSTest
             Assert.AreEqual(8, sizeof(System.UInt64));
             Assert.AreEqual(8, sizeof(System.Int64));
             Assert.AreEqual(8, sizeof(System.Double));
-            Assert.AreEqual(16, sizeof(System.Decimal));
         }
 
         #region Waiting for Pose bugfix
@@ -516,6 +515,7 @@ namespace FuzzedDataProviderCSTest
         public void TestConsumeEnum()
         {
             byte[] testArr0 = { 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x08 };
+
             var fdp = new FuzzedDataProviderCS(testArr0, false);
             var result = fdp.ConsumeEnum<testEnum>();
             Assert.AreEqual(4, result);
@@ -524,6 +524,56 @@ namespace FuzzedDataProviderCSTest
             result = fdp.ConsumeEnum<testEnum>();
             Assert.AreEqual(0, result);
             Assert.AreEqual(true, fdp.InsufficientData);
+        }
+
+        [TestMethod]
+        public void TestConsumeDateTime()
+        {
+            byte[] testArr0 = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            byte[] testArr1 = { 0x2b, 0xca, 0x28, 0x75, 0xf4, 0x37, 0x3f, 0xff };
+            byte[] testArr2 = { 0x7F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+            byte[] testArr3 = { 0x11, 0x03, 0x08, 0x30, 0x0A, 0x50, 0x0B, 0x0C };
+            byte[] testArr4 = { 0x20, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00 };
+            
+            var fdp = new FuzzedDataProviderCS(testArr0, false);
+            var result = fdp.ConsumeDateTime();
+            Assert.AreEqual(DateTime.MinValue, result);
+            Assert.AreEqual(false, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr1, false);
+            result = fdp.ConsumeDateTime();
+            Assert.AreEqual(DateTime.MaxValue, result);
+            Assert.AreEqual(false, fdp.InsufficientData);
+            
+            fdp = new FuzzedDataProviderCS(testArr2, false);
+            result = fdp.ConsumeDateTime(
+                min : new DateTime(1992, 1, 5), max : new DateTime(2020, 2, 3));
+            Assert.AreEqual(result.Year, 2016);
+            Assert.AreEqual(false, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr3, false);
+            result = fdp.ConsumeDateTime(
+                min : new DateTime(1992, 1, 5), max : new DateTime(2020, 2, 3));
+            Assert.AreEqual(result.Year, 2001);
+            Assert.AreEqual(false, fdp.InsufficientData);
+           
+            fdp = new FuzzedDataProviderCS(testArr4, false);
+            result = fdp.ConsumeDateTime(
+                min : new DateTime(1992, 1, 5), max : new DateTime(2020, 2, 3));
+            Assert.AreEqual(result.Year, 1998);
+            Assert.AreEqual(true, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr1, false);
+            result = fdp.ConsumeDateTime(
+                min : new DateTime(1992, 1, 5), max : new DateTime(2020, 2, 3));
+            Assert.AreEqual(result.Year, 1994);
+            Assert.AreEqual(false, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr0, false);
+            result = fdp.ConsumeDateTime(
+                min : new DateTime(1992, 1, 5), max : new DateTime(2020, 2, 3));
+            Assert.AreEqual(result.Year, 1992);
+            Assert.AreEqual(false, fdp.InsufficientData);
         }
     }
 }

@@ -330,5 +330,40 @@ namespace FuzzedDataProviderCSLibrary
             var values = Enum.GetValues(typeof(T));
             return (Int32)values.GetValue(result % values.Length);
         }
+
+        public Double ConsumeDouble () 
+        {
+            Double result;
+            int step = sizeof(Double);
+            if (CheckIfEnoughData(step))
+            {
+                var toBeConverted = _data.AsSpan(_offset, step);
+                result = BitConverter.ToDouble(toBeConverted);
+            }
+            else
+            {
+                Span<byte> toBeConverted = stackalloc byte[step];
+                toBeConverted.Fill(0x00);
+                _data.AsSpan(_offset).CopyTo(toBeConverted);
+                result = BitConverter.ToDouble(toBeConverted);
+            }
+            Advance(step);           
+            return result;
+        }
+
+        public DateTime ConsumeDateTime() =>
+            ConsumeDateTime(DateTime.MinValue, DateTime.MaxValue);
+
+        public DateTime ConsumeDateTime(DateTime min, DateTime max) 
+        {
+            Int64 toBeConverted = ConsumeInt64();
+            Advance(sizeof(Int64));           
+
+            Int64 minDTTics = Math.Max(DateTime.MinValue.Ticks, min.Ticks); 
+            Int64 maxDTTics = Math.Min(DateTime.MaxValue.Ticks, max.Ticks); 
+                        
+            return new DateTime(
+                Math.Abs(toBeConverted % (maxDTTics - minDTTics + 1)) + minDTTics);
+        }
     }
 }
