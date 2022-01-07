@@ -2,8 +2,6 @@
 
 *Made as a part of __Competence Center Community__ activities (Telegram: @sdl_community)*
 
-
-
 FuzzedDataProvider for C#, inspired by Google's FuzzedDataProvider. Look at: 
 - common description and the conception of Structure Aware Fuzzing  https://github.com/google/fuzzing/blob/master/docs/split-inputs.md#fuzzed-data-provider
 - source code https://github.com/llvm-mirror/compiler-rt/blob/master/include/fuzzer/FuzzedDataProvider.h
@@ -30,7 +28,7 @@ Also try to restart restart VSCode after rebuild (developed and tested with VSCo
 
 ### HowTo (Main commands):
 
-1. Create FuzzedDataProviderCS class instance. You must pass to the constructor an array to be parsed (mandatory property).You can instruct the instance to exit the program (and, in case of fuzzing, move to the next iteration) when all the fuzzed data was consumed, but not all concuming calls were done (arbitrary property).
+1. Create FuzzedDataProviderCS class instance. You must pass to the constructor an array to be parsed (mandatory property `data`).You can instruct the instance to exit the program (and, in case of fuzzing, move to the next iteration) when all the fuzzed data was consumed, but not all concuming calls were done (arbitrary property `exitAppOnInsufficientData`).
 
 2. Start consuming the data using consuming functions (all public functions are self-documented):
 
@@ -55,7 +53,11 @@ Also try to restart restart VSCode after rebuild (developed and tested with VSCo
 - you can instruct the instance to consume a String where all of the symbols must belong to a Set of ['a', 'B', '8', 'Ă'];
 - etc.
 
+4. When the data to be consumed is over, but you ordere the instance to consume more, insufficient bytes will be filled with 0x00 (in case of `exitAppOnInsufficientData` was set to default value `false` in instance constructor).
+
 ### HowTo (Example):
+
+
 
 ### Tasks:
 1. Templatize it using Generics/Abstract class.
