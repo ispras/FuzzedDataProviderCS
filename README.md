@@ -16,3 +16,4 @@ In case of troubles with Debuger (because of different target platforms of Libra
 2. Test in DNF/Win.
 3. Make shims and test for another encoding order (need fix for Pose library https://github.com/tonerdo/pose/issues/69). 
 
+- [x] sss
