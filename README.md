@@ -26,7 +26,7 @@ dotnet build -a x64 FuzzedDataProviderCSTest/FuzzedDataProviderCSTest.csproj
 ```
 Also try to restart restart VSCode after rebuild (developed and tested with VSCode).
 
-### HowTo (Main commands):
+### HowTo (Main concept and commands):
 
 1. Create FuzzedDataProviderCS class instance. You must pass to the constructor an array to be parsed (mandatory property `data`).You can instruct the instance to exit the program (and, in case of fuzzing, move to the next iteration) when all the fuzzed data was consumed, but not all concuming calls were done (arbitrary property `exitAppOnInsufficientData`).
 
@@ -57,7 +57,7 @@ Also try to restart restart VSCode after rebuild (developed and tested with VSCo
 
 ### HowTo (Example):
 
-
+You could see a plenty of them in [UnitTest1.cs](FuzzedDataProviderCSTest/UnitTest1.cs)
 
 ### Tasks:
 1. Templatize it using Generics/Abstract class.
