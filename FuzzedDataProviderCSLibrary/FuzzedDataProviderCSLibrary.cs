@@ -82,6 +82,18 @@ namespace FuzzedDataProviderCSLibrary
         private void Advance(int step) =>
             _offset += step;
 
+        /// <summary>
+        /// Consume 4 (sizeof(Int32)) bytes and parse it into Int32. If there is not enough data, empties will be filled with zeroes.
+        /// </summary>
+        /// <param name="min">
+        /// Minimal value of possible Range.
+        /// </param>
+        /// <param name="max">
+        /// Maximal value of possible Range.
+        /// </param>
+        /// <returns>
+        /// Returns Int32.
+        /// </returns>
         public Int32 ConsumeInt32(Int32 min = Int32.MinValue, Int32 max = Int32.MaxValue)
         {
             Int32 result;
@@ -109,6 +121,18 @@ namespace FuzzedDataProviderCSLibrary
             return result;
         }
 
+        /// <summary>
+        /// Consume 4 (sizeof(UInt32)) bytes and parse it into UInt32. If there is not enough data, empties will be filled with zeroes.
+        /// </summary>
+        /// <param name="min">
+        /// Minimal value of possible Range.
+        /// </param>
+        /// <param name="max">
+        /// Maximal value of possible Range.
+        /// </param>
+        /// <returns>
+        /// Returns UInt32.
+        /// </returns>
         public UInt32 ConsumeUInt32(UInt32 min = UInt32.MinValue, UInt32 max = UInt32.MaxValue)
         {
             UInt32 result;
@@ -136,6 +160,18 @@ namespace FuzzedDataProviderCSLibrary
             return result;
         }
 
+        /// <summary>
+        /// Consume 2 (sizeof(Int16)) bytes and parse it into Int16. If there is not enough data, empties will be filled with zeroes.
+        /// </summary>
+        /// <param name="min">
+        /// Minimal value of possible Range.
+        /// </param>
+        /// <param name="max">
+        /// Maximal value of possible Range.
+        /// </param>
+        /// <returns>
+        /// Returns Int16.
+        /// </returns>
         public Int16 ConsumeInt16(Int16 min = Int16.MinValue, Int16 max = Int16.MaxValue)
         {
             Int16 result;
@@ -163,6 +199,18 @@ namespace FuzzedDataProviderCSLibrary
             return result;
         }
 
+        /// <summary>
+        /// Consume 2 (sizeof(UInt16)) bytes and parse it into UInt16. If there is not enough data, empties will be filled with zeroes.
+        /// </summary>
+        /// <param name="min">
+        /// Minimal value of possible Range.
+        /// </param>
+        /// <param name="max">
+        /// Maximal value of possible Range.
+        /// </param>
+        /// <returns>
+        /// Returns UInt16.
+        /// </returns>
         public UInt16 ConsumeUInt16(UInt16 min = UInt16.MinValue, UInt16 max = UInt16.MaxValue)
         {
             UInt16 result;
@@ -190,6 +238,18 @@ namespace FuzzedDataProviderCSLibrary
             return result;
         }
 
+        /// <summary>
+        /// Consume 8 (sizeof(Int64)) bytes and parse it into Int64. If there is not enough data, empties will be filled with zeroes.
+        /// </summary>
+        /// <param name="min">
+        /// Minimal value of possible Range.
+        /// </param>
+        /// <param name="max">
+        /// Maximal value of possible Range.
+        /// </param>
+        /// <returns>
+        /// Returns Int64.
+        /// </returns>
         public Int64 ConsumeInt64(Int64 min = Int64.MinValue, Int64 max = Int64.MaxValue)
         {
             Int64 result;
@@ -217,6 +277,18 @@ namespace FuzzedDataProviderCSLibrary
             return result;
         }
 
+        /// <summary>
+        /// Consume 8 (sizeof(UInt64)) bytes and parse it into UInt64. If there is not enough data, empties will be filled with zeroes.
+        /// </summary>
+        /// <param name="min">
+        /// Minimal value of possible Range.
+        /// </param>
+        /// <param name="max">
+        /// Maximal value of possible Range.
+        /// </param>
+        /// <returns>
+        /// Returns UInt64.
+        /// </returns>
         public UInt64 ConsumeUInt64(UInt64 min = UInt64.MinValue, UInt64 max = UInt64.MaxValue)
         {
             UInt64 result;
@@ -244,6 +316,18 @@ namespace FuzzedDataProviderCSLibrary
             return result;
         }
 
+        /// <summary>
+        /// Consume 1 (sizeof(Byte)) byte and parse it into Byte. If there is not enough data, empties will be filled with zeroes.
+        /// </summary>
+        /// <param name="min">
+        /// Minimal value of possible Range.
+        /// </param>
+        /// <param name="max">
+        /// Maximal value of possible Range.
+        /// </param>
+        /// <returns>
+        /// Returns Byte.
+        /// </returns>
         public Byte ConsumeByte(Byte min = Byte.MinValue, Byte max = Byte.MaxValue)
         {
             Byte result;
@@ -255,6 +339,18 @@ namespace FuzzedDataProviderCSLibrary
             return result;
         }
 
+        /// <summary>
+        /// Consume 2 (sizeof(Char)) bytes and parse it into Char. 
+        /// Unicode encoding is used, BE or LE is determined automatically using BitConverter.IsLittleEndian. 
+        /// The goal is to give the user ability to construct fuzzinag sample all the time in a constant manner. 
+        /// If there is not enough data, empties will be filled with zeroes.
+        /// </summary>
+        /// <param name="bagOfChars">
+        /// Possible values of chars. All the incoming chars will me mapped to this set.
+        /// </param>       
+        /// <returns>
+        /// Returns Char.
+        /// </returns>
         public Char ConsumeChar(HashSet<Char>? bagOfChars = null)
         {            
             int step = sizeof(Char);
@@ -278,7 +374,7 @@ namespace FuzzedDataProviderCSLibrary
             else
                 return bagOfChars.ElementAt((Int32)(result[0]) % bagOfChars.Count);
         }
-
+        
         private Byte[] _ConsumeBytes(
             Int32 ? length = 0, Byte min = Byte.MinValue, Byte max = Byte.MaxValue)
         {
@@ -296,15 +392,42 @@ namespace FuzzedDataProviderCSLibrary
             return result;
         }
        
+        /// <summary>
+        /// Consume bytes. If there is not enough data, empties will be filled with zeroes.
+        /// </summary>
+        /// <param name="length">
+        /// Consume Byte array of predefined length.
+        /// </param>
+        /// <param name="min">
+        /// Minimal value of possible Range.
+        /// </param>
+        /// <param name="max">
+        /// Maximal value of possible Range.
+        /// </param>      
+        /// <returns>
+        /// Returns Byte[].
+        /// </returns>
         public Byte[] ConsumeBytes(
             Int32 length = 0, Byte min = Byte.MinValue, Byte max = Byte.MaxValue) =>
                 _ConsumeBytes(length, min, max);        
 
+        /// <summary>
+        /// Consume all the remaining data as bytes. 
+        /// </summary>      
+        /// <param name="min">
+        /// Minimal value of possible Range.
+        /// </param>
+        /// <param name="max">
+        /// Maximal value of possible Range.
+        /// </param>      
+        /// <returns>
+        /// Returns Byte[].
+        /// </returns>
         public Byte[] ConsumeRemainingBytes(
             Byte min = Byte.MinValue, Byte max = Byte.MaxValue) =>
                 _ConsumeBytes(null, min, max);
 
-         private String _ConsumeString(
+        private String _ConsumeString(
             Int32 ? length = 0, HashSet<Char>? bagOfChars = null)
         {
             int step = length is null ?
@@ -324,13 +447,46 @@ namespace FuzzedDataProviderCSLibrary
                         
             return strBuilder.ToString();
         }
+
+        /// <summary>
+        /// Consume string.
+        /// Unicode encoding is used, BE or LE is determined automatically using BitConverter.IsLittleEndian. 
+        /// The goal is to give the user ability to construct fuzzinag sample all the time in a constant manner. 
+        /// If there is not enough data, empties will be filled with zeroes. 
+        /// </summary>
+        /// <param name="length">
+        /// Consume Byte array of predefined length.
+        /// </param>
+        /// <param name="bagOfChars">
+        /// Possible values of chars. All the incoming chars will me mapped to this set.
+        /// </param>      
+        /// <returns>
+        /// Returns String.
+        /// </returns>
         public String ConsumeString(
             Int32 length = 0, HashSet<Char>? bagOfChars = null)=>
                 _ConsumeString(length, bagOfChars);
 
+        /// <summary>
+        /// Consume all the remaining data as string.
+        /// Unicode encoding is used, BE or LE is determined automatically using BitConverter.IsLittleEndian. 
+        /// The goal is to give the user ability to construct fuzzinag sample all the time in a constant manner. 
+        /// If there is not enough data, empties will be filled with zeroes.       
+        /// <param name="bagOfChars">
+        /// Possible values of chars. All the incoming chars will me mapped to this set.
+        /// </param>      
+        /// <returns>
+        /// Returns String.
+        /// </returns>
         public String ConsumeRemainingAsString(HashSet<Char>? bagOfChars = null) =>
                 _ConsumeString(null, bagOfChars);
         
+        /// <summary>
+        /// Consume 4 bytes and cast it to a enum<T> value. It will be mapped into enum<T>  values (not to an random int).        
+        /// If there is not enough data, empties will be filled with zeroes. 
+        /// <returns>
+        /// Returns Int32 value of enum<T> element.
+        /// </returns>
         public Int32 ConsumeEnum<T> () where T : Enum
         {
             Int32 result = ConsumeInt32();
@@ -338,6 +494,12 @@ namespace FuzzedDataProviderCSLibrary
             return (Int32)values.GetValue(result % values.Length);
         }
 
+        /// <summary>
+        /// Consume 8 bytes (sizeof(Double)) bytes and parse it into Double.
+        /// If there is not enough data, empties will be filled with zeroes. 
+        /// <returns>
+        /// Returns Double.
+        /// </returns>
         public Double ConsumeDouble () 
         {
             Double result;
@@ -359,9 +521,27 @@ namespace FuzzedDataProviderCSLibrary
             return result;
         }
 
+        /// <summary>
+        /// Consume 8 bytes (sizeof(Int64)) bytes and parse it into DateTime.
+        /// If there is not enough data, empties will be filled with zeroes. 
+        /// <returns>
+        /// Returns DateTime.
+        /// </returns>
         public DateTime ConsumeDateTime() =>
             ConsumeDateTime(DateTime.MinValue, DateTime.MaxValue);
 
+        /// <summary>
+        /// Consume 8 bytes (sizeof(Int64)) bytes and parse it into DateTime.
+        /// If there is not enough data, empties will be filled with zeroes.
+        /// <param name="min">
+        /// Minimal value of possible Range.
+        /// </param>
+        /// <param name="max">
+        /// Maximal value of possible Range.
+        /// </param>       
+        /// <returns>
+        /// Returns DateTime.
+        /// </returns>
         public DateTime ConsumeDateTime(DateTime min, DateTime max) 
         {
             Int64 toBeConverted = ConsumeInt64();

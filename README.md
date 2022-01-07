@@ -8,11 +8,13 @@ FuzzedDataProvider for C#, inspired by Google's FuzzedDataProvider. Look at:
 - example https://fuchsia.googlesource.com/fuchsia/+/dbda4024104e/examples/fuzzers/cpp/fuzzed-data-provider.cc
 - abstract (mostly in Russian) [Structure_Aware_Fuzzing_and_logical_erros.pdf](Docs/Structure_Aware_Fuzzing_and_logical_erros.pdf) 
 
-Made for using with C#-fuzzers (like https://github.com/Metalnem/sharpfuzz).
+Written in **.NET Standard 2.1**.
+
+Made for using with C#-fuzzers [like sharpfuzz](https://github.com/Metalnem/sharpfuzz). 
 
 ### HowTo (Test run):
 
-Ubuntu 20.04, install .NET 6 (https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#2004-), then:
+Ubuntu 20.04, install [.NET 6](https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#2004-), then:
 
 ```
 dotnet build
