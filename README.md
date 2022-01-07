@@ -2,6 +2,7 @@
 
 *Made as a part of __Competence Center Community__ activities (Telegram: @sdl_community)*
 
+
 FuzzedDataProvider for C#, inspired by Google's FuzzedDataProvider. Look at: 
 - common description and the conception of Structure Aware Fuzzing  https://github.com/google/fuzzing/blob/master/docs/split-inputs.md#fuzzed-data-provider
 - source code https://github.com/llvm-mirror/compiler-rt/blob/master/include/fuzzer/FuzzedDataProvider.h
