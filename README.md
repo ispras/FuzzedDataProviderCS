@@ -84,7 +84,7 @@ will construct:
 resultUInt16,h: 0x0102
 resultBytes,h: {byte[0x00000002]} 0x00, 0x41
 resultStr: "EC" //Yeah, the magic of mapping of A'\x41' and Ă'\x0102' to C'\u0043' and E'\x45'
-resultDT: {1/1/0001 12:00:00 AM}
+resultDT: {1/1/0001 12:00:00 AM} //Smallest possible DateTime
 ```
 
 You could see a plenty of usings and results in [UnitTest1.cs](FuzzedDataProviderCSTest/UnitTest1.cs). 
