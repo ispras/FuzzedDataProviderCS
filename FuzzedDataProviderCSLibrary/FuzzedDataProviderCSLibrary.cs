@@ -19,7 +19,7 @@ namespace FuzzedDataProviderCSLibrary
         private int _offset = 0;
         private bool _exitAppOnInsufficientData;
         private bool _insufficientData = false;
-        
+
         /// <param name="exitAppOnInsufficientData">
         /// If set to true, the fuzzing iteration will be finished when the fuzzed data is over.
         /// </param>
@@ -32,9 +32,9 @@ namespace FuzzedDataProviderCSLibrary
         }
 
         public static bool IsLittleEndian
-        {            
+        {
             get => BitConverter.IsLittleEndian;
-        } 
+        }
 
         /// <summary>
         /// This property tells you if fuzzed data is over, also finishes the fuzzing iteration if exitAppOnInsufficientData is True.        
@@ -132,7 +132,7 @@ namespace FuzzedDataProviderCSLibrary
             if (min != UInt32.MinValue || max != UInt32.MaxValue)
                 result = result % (max - min + 1) + min;
             return result;
-        }    
+        }
 
         public Int16 ConsumeInt16(Int16 min = Int16.MinValue, Int16 max = Int16.MaxValue)
         {
@@ -184,8 +184,8 @@ namespace FuzzedDataProviderCSLibrary
             if (min != UInt16.MinValue || max != UInt16.MaxValue)
                 result = (UInt16)(result % (max - min + 1) + min);
             return result;
-        }    
-        
+        }
+
         public Int64 ConsumeInt64(Int64 min = Int64.MinValue, Int64 max = Int64.MaxValue)
         {
             Int64 result;
@@ -237,37 +237,98 @@ namespace FuzzedDataProviderCSLibrary
                 result = result % (max - min + 1) + min;
             return result;
         }
-    
+
         public Byte ConsumeByte(Byte min = Byte.MinValue, Byte max = Byte.MaxValue)
         {
             Byte result;
             int step = sizeof(Byte);
-            result = CheckIfEnoughData(step) ? _data[_offset] : Byte.MinValue;          
+            result = CheckIfEnoughData(step) ? _data[_offset] : Byte.MinValue;
             Advance(step);
             if (min != byte.MinValue || max != Byte.MaxValue)
                 result = (Byte)(Math.Abs(result % (max - min + 1)) + min);
             return result;
         }
 
-        public Char ConsumeChar(HashSet<Char> ? bagOfChars = null)
-        {
-            Char result;
+        public Char ConsumeChar(HashSet<Char>? bagOfChars = null)
+        {            
             int step = sizeof(Char);
-            Span<byte> toBeConverted = stackalloc byte[step];
-            toBeConverted.Fill(0x00);
+            Span<Char> result = stackalloc Char[1];
+            Span<Byte> toBeConverted = stackalloc Byte[step];
+            toBeConverted.Fill(0x00); 
 
             if (CheckIfEnoughData(step))
                 _data.AsSpan(_offset, step).CopyTo(toBeConverted);
             else
-                _data.AsSpan(_offset).CopyTo(toBeConverted);                
+                _data.AsSpan(_offset).CopyTo(toBeConverted);           
             if (IsLittleEndian)
-                    toBeConverted.Reverse();
-            result = BitConverter.ToChar(toBeConverted);
-            Advance(step);            
+                Encoding.BigEndianUnicode.GetChars(toBeConverted, result); 
+            else            
+                Encoding.Unicode.GetChars(toBeConverted, result); // BitConverter.ToChar(toBeConverted);
+            Advance(step);
+
             if (bagOfChars is null || bagOfChars.Count == 0)
-                return result;
+                return result[0];
             else
-                return bagOfChars.ElementAt((Int32)(result) % bagOfChars.Count);
+                return bagOfChars.ElementAt((Int32)(result[0]) % bagOfChars.Count);
         }
-    }  
+
+        private Byte[] _ConsumeBytes(
+            Int32 ? length = 0, Byte min = Byte.MinValue, Byte max = Byte.MaxValue)
+        {
+            int step = length is null ? 
+                _data.Length - _offset : 
+                sizeof(Byte) * (Int32)length;
+
+            var result = new Byte[step];
+            Array.Copy(_data, _offset, result, 0,
+                CheckIfEnoughData(step) ? step : _data.Length - _offset);
+            Advance(step);
+            if (min != byte.MinValue || max != Byte.MaxValue)
+                for (int i = 0; i < result.Length; i++)
+                    result[i] = (Byte)(Math.Abs(result[i] % (max - min + 1)) + min);
+            return result;
+        }
+       
+        public Byte[] ConsumeBytes(
+            Int32 length = 0, Byte min = Byte.MinValue, Byte max = Byte.MaxValue) =>
+                _ConsumeBytes(length, min, max);        
+
+        public Byte[] ConsumeRemainingBytes(
+            Byte min = Byte.MinValue, Byte max = Byte.MaxValue) =>
+                _ConsumeBytes(null, min, max);
+
+         private String _ConsumeString(
+            Int32 ? length = 0, HashSet<Char>? bagOfChars = null)
+        {
+            int step = length is null ?
+                (_data.Length - _offset) + ((_data.Length - _offset) % sizeof(Char) == 0 ? 0 : 1) : 
+                sizeof(Char) * (int)length;
+            var toBeConverted = ConsumeBytes(step);            
+            Advance(step);
+
+            var strBuilder = IsLittleEndian ? 
+                new StringBuilder(Encoding.BigEndianUnicode.GetString(toBeConverted)) :
+                new StringBuilder(Encoding.Unicode.GetString(toBeConverted));
+
+            if (!(bagOfChars is null) && bagOfChars.Count != 0)
+                for (int i = 0; i < strBuilder.Length; i++)
+                    strBuilder[i] = bagOfChars.ElementAt(
+                        (Int32)(strBuilder[i]) % bagOfChars.Count);
+                        
+            return strBuilder.ToString();
+        }
+        public String ConsumeString(
+            Int32 length = 0, HashSet<Char>? bagOfChars = null)=>
+                _ConsumeString(length, bagOfChars);
+
+        public String ConsumeRemainingAsString(HashSet<Char>? bagOfChars = null) =>
+                _ConsumeString(null, bagOfChars);
+        
+        public Int32 ConsumeEnum<T> () where T : Enum
+        {
+            Int32 result = ConsumeInt32();
+            var values = Enum.GetValues(typeof(T));
+            return (Int32)values.GetValue(result % values.Length);
+        }
+    }
 }

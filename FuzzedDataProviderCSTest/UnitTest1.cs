@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -98,10 +99,10 @@ namespace FuzzedDataProviderCSTest
             fdp = new FuzzedDataProviderCS(testArr3, false);
             result = fdp.ConsumeInt32(min: 0, max: 2);
             Assert.AreEqual(0, result);
-            
+
             fdp = new FuzzedDataProviderCS(testArr4, false);
             result = fdp.ConsumeInt32();
-            Assert.AreEqual(-270, result);       
+            Assert.AreEqual(-270, result);
             Assert.AreEqual(false, fdp.InsufficientData); //Just for extra non-important test
 
             fdp = new FuzzedDataProviderCS(testArr5, false);
@@ -111,7 +112,7 @@ namespace FuzzedDataProviderCSTest
             fdp = new FuzzedDataProviderCS(testArr5, false);
             result = fdp.ConsumeInt32();
             Assert.AreEqual(-1, result);
-            
+
             fdp = new FuzzedDataProviderCS(testArr6, false);
             result = fdp.ConsumeInt32();
             Assert.AreEqual(Int32.MaxValue, result);
@@ -134,7 +135,7 @@ namespace FuzzedDataProviderCSTest
             byte[] testArr0 = { };
 
             byte[] testArr1 = { 0x01 };
-            
+
             byte[] testArr2 = { 0x01, 0x00, 0x00, 0x00, 0x01 };
 
             byte[] testArr3 = { 0x00, 0x00, 0x03 };
@@ -146,23 +147,23 @@ namespace FuzzedDataProviderCSTest
 
             fdp = new FuzzedDataProviderCS(testArr2, false);
             result = fdp.ConsumeInt32();
-            Assert.AreEqual(16777216, result);       
+            Assert.AreEqual(16777216, result);
             Assert.AreEqual(false, fdp.InsufficientData);
             result = fdp.ConsumeInt32();
             Assert.AreEqual(16777216, result);
-            Assert.AreEqual(true, fdp.InsufficientData);  
+            Assert.AreEqual(true, fdp.InsufficientData);
 
             fdp = new FuzzedDataProviderCS(testArr2, false);
             result = fdp.ConsumeInt32(16777214, 16777215);
-            Assert.AreEqual(16777214, result);       
+            Assert.AreEqual(16777214, result);
             Assert.AreEqual(false, fdp.InsufficientData);
             result = fdp.ConsumeInt32(16777214, 16777215);
             Assert.AreEqual(16777214, result);
-            Assert.AreEqual(true, fdp.InsufficientData); 
+            Assert.AreEqual(true, fdp.InsufficientData);
 
             fdp = new FuzzedDataProviderCS(testArr3, false);
             result = fdp.ConsumeInt32();
-            Assert.AreEqual(768, result);       
+            Assert.AreEqual(768, result);
             Assert.AreEqual(true, fdp.InsufficientData);
         }
 
@@ -201,9 +202,9 @@ namespace FuzzedDataProviderCSTest
 
             fdp = new FuzzedDataProviderCS(testArr4, false);
             result = fdp.ConsumeUInt32(min: 17, max: 20);
-            Assert.AreEqual((UInt32)17, result);            
+            Assert.AreEqual((UInt32)17, result);
             Assert.AreEqual(false, fdp.InsufficientData); //Just for extra non-important test
-                        
+
             fdp = new FuzzedDataProviderCS(testArr0, false);
             result = fdp.ConsumeUInt32();
             Assert.AreEqual(UInt32.MinValue, result);
@@ -227,7 +228,7 @@ namespace FuzzedDataProviderCSTest
         [TestMethod]
         public void TestConsumeUInt32NotEnoughData()
         {
-            byte[] testArr0 = { 0xFF, 0xFF, 0xFF};
+            byte[] testArr0 = { 0xFF, 0xFF, 0xFF };
             var fdp = new FuzzedDataProviderCS(testArr0, false);
             var result = fdp.ConsumeUInt32();
             Assert.AreEqual((UInt32)4294967040, result);
@@ -279,9 +280,9 @@ namespace FuzzedDataProviderCSTest
         [TestMethod]
         public void TestConsumeInt64()
         {
-            byte[] testArr0 = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-            byte[] testArr1 = { 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-            byte[] testArr2 = { 0x7F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+            byte[] testArr0 = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+            byte[] testArr1 = { 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            byte[] testArr2 = { 0x7F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
             var fdp = new FuzzedDataProviderCS(testArr0, false);
             var result = fdp.ConsumeInt64();
@@ -300,9 +301,9 @@ namespace FuzzedDataProviderCSTest
         [TestMethod]
         public void TestConsumeUInt64()
         {
-            byte[] testArr0 = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-            byte[] testArr1 = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-            byte[] testArr2 = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+            byte[] testArr0 = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+            byte[] testArr1 = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            byte[] testArr2 = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
             var fdp = new FuzzedDataProviderCS(testArr0, false);
             var result = fdp.ConsumeUInt64();
@@ -316,8 +317,8 @@ namespace FuzzedDataProviderCSTest
             fdp = new FuzzedDataProviderCS(testArr2, false);
             result = fdp.ConsumeUInt64(0, UInt64.MaxValue);
             Assert.AreEqual(UInt64.MaxValue, result);
-        } 
-    
+        }
+
         [TestMethod]
         public void TestConsumeByte()
         {
@@ -342,25 +343,73 @@ namespace FuzzedDataProviderCSTest
             fdp = new FuzzedDataProviderCS(testArr3, false);
             result = fdp.ConsumeByte(1, 3);
             Assert.AreEqual((Byte)3, result);
-        } 
-    
-        ///<summary>
-        ///Tested in Ubuntu 20.04, where UTF-8_no_BOM is to be the default one.
-        ///</summary>
+        }
+
         [TestMethod]
-        public void TestChar()
+        public void TestConsumeBytes()
+        {
+            byte[] testArr0 = { };
+            byte[] testArr1 = { 0x00, 0x05, 0x07 };
+            byte[] testArr2 = { 0x00, 0x05 };
+            byte[] testArr3 = { 0x07 };
+            byte[] testArr4 = { 0x00, 0x00, 0x00 };
+            byte[] testArr5 = { 0x00 };
+            byte[] testArr6 = { 0x05, 0x07 };
+            byte[] testArr7 = { 0x00, 0x05, 0x07, 0x03 };
+            byte[] testArr8 = { 0x02, 0x04, 0x03, 0x02, 0x02 };
+
+            var fdp = new FuzzedDataProviderCS(testArr0, false);
+            var result = fdp.ConsumeBytes();
+            Assert.AreEqual(0, result.Length);
+            Assert.AreEqual(true, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr1, false);
+            result = fdp.ConsumeBytes(2);
+            Assert.AreEqual(2, result.Length);
+            Assert.IsTrue(Enumerable.SequenceEqual(testArr2, result));
+            Assert.AreEqual(false, fdp.InsufficientData);
+            result = fdp.ConsumeBytes(1);
+            Assert.IsTrue(Enumerable.SequenceEqual(testArr3, result));
+            Assert.AreEqual(false, fdp.InsufficientData);
+            result = fdp.ConsumeBytes(3);
+            Assert.IsTrue(Enumerable.SequenceEqual(testArr4, result));
+            Assert.AreEqual(true, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr1, false);
+            result = fdp.ConsumeRemainingBytes();
+            Assert.IsTrue(Enumerable.SequenceEqual(testArr1, result));
+            Assert.AreEqual(false, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr1, false);
+            result = fdp.ConsumeBytes(1);
+            Assert.IsTrue(Enumerable.SequenceEqual(testArr5, result));
+            Assert.AreEqual(false, fdp.InsufficientData);
+            result = fdp.ConsumeRemainingBytes();
+            Assert.IsTrue(Enumerable.SequenceEqual(testArr6, result));
+            Assert.AreEqual(false, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr7, false);
+            result = fdp.ConsumeBytes(5, 0x02, 0x04);
+            Assert.IsTrue(Enumerable.SequenceEqual(testArr8, result));
+            Assert.AreEqual(true, fdp.InsufficientData);
+        }
+
+        [TestMethod]
+        public void TestConsumeChar()
         {
             byte[] testArr0 = { };
             byte[] testArr1 = { 0x23 };
             byte[] testArr2 = { 0x88, 0xAA };
             byte[] testArr3 = { 0x00, 0x25 };
             byte[] testArr4 = { 0x00, 0x26 };
-            
+            byte[] testArr5 = { 0x01, 0x02 };
+            byte[] testArr6 = { 0x00, 0x41 };
+
             var fdp = new FuzzedDataProviderCS(testArr0, false);
             var result = fdp.ConsumeChar();
             Assert.AreEqual('\0', result);
             Assert.AreEqual(true, fdp.InsufficientData);
-            
+
             fdp = new FuzzedDataProviderCS(testArr1, false);
             result = fdp.ConsumeChar();
             Assert.AreEqual('\u2300', result);
@@ -377,20 +426,104 @@ namespace FuzzedDataProviderCSTest
             Assert.AreEqual(false, fdp.InsufficientData);
 
             fdp = new FuzzedDataProviderCS(testArr3, false);
-            result = fdp.ConsumeChar(new HashSet<char>() {'\x22'});
+            result = fdp.ConsumeChar(new HashSet<char>() { '\x22' });
             Assert.AreEqual('\u0022', result);
             Assert.AreEqual(false, fdp.InsufficientData);
 
             fdp = new FuzzedDataProviderCS(testArr3, false);
-            result = fdp.ConsumeChar(new HashSet<char>() {'\x20', '\x21', '\x22'});
+            result = fdp.ConsumeChar(new HashSet<char>() { '\x20', '\x21', '\x22' });
             Assert.AreEqual('\u0021', result);
             Assert.AreEqual(false, fdp.InsufficientData);
 
             fdp = new FuzzedDataProviderCS(testArr4, false);
-            result = fdp.ConsumeChar(new HashSet<char>() {'\x20', '\x21', '\x22'});
+            result = fdp.ConsumeChar(new HashSet<char>() { '\x20', '\x21', '\x22' });
             Assert.AreEqual('\u0022', result);
             Assert.AreEqual(false, fdp.InsufficientData);
-        } 
- 
-    }    
+
+            fdp = new FuzzedDataProviderCS(testArr5, false);
+            result = fdp.ConsumeChar();
+            Assert.AreEqual('Ă', result);
+            Assert.AreEqual(false, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr6, false);
+            result = fdp.ConsumeChar();
+            Assert.AreEqual('A', result);
+            Assert.AreEqual(false, fdp.InsufficientData);
+        }
+
+        ///<summary>
+        ///Tested in Ubuntu 20.04, where UTF-8_no_BOM is to be the default one.
+        ///</summary>
+        [TestMethod]
+        public void TestConsumeString()
+        {
+            byte[] testArr0 = { };
+            byte[] testArr1 = { 0x01, 0x02, 0x00, 0x41, 0x00, 0x42, 0x01, 0x02 };
+            byte[] testArr2 = { 0x01, 0x02, 0x00, 0x41 };
+            byte[] testArr3 = { 0x01, 0x02, 0x00, 0x41, 0x00 };
+
+            var fdp = new FuzzedDataProviderCS(testArr0, false);
+            var result = fdp.ConsumeString();
+            Assert.AreEqual(String.Empty, result);
+            Assert.AreEqual(true, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr1, false);
+            result = fdp.ConsumeString(4);
+            Assert.AreEqual("ĂABĂ", result);
+            Assert.AreEqual(false, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr2, false);
+            result = fdp.ConsumeString(3);
+            Assert.AreEqual("ĂA\0", result);
+            Assert.AreEqual(true, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr3, false);
+            result = fdp.ConsumeString(3);
+            Assert.AreEqual("ĂA\0", result);
+            Assert.AreEqual(true, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr2, false);
+            result = fdp.ConsumeRemainingAsString();
+            Assert.AreEqual("ĂA", result);
+            Assert.AreEqual(false, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr3, false);
+            result = fdp.ConsumeRemainingAsString();
+            Assert.AreEqual("ĂA\0", result);
+            Assert.AreEqual(true, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr1, false);
+            var resultChr = fdp.ConsumeChar();
+            var resultStr = fdp.ConsumeString(3);
+            Assert.AreEqual(3, resultStr.Length);
+            Assert.AreEqual(resultChr, resultStr[2]);
+            Assert.AreEqual(false, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr1, false);
+            result = fdp.ConsumeRemainingAsString(new HashSet<char>() { '\u0043', '\x0044', '\x45' });
+            Assert.AreEqual("CECC", result);
+            Assert.AreEqual(false, fdp.InsufficientData);
+        }
+
+        enum testEnum
+        {
+            None = 0,
+            Test1 = 4,
+            Test2 = 9
+        }
+
+        [TestMethod]
+        public void TestConsumeEnum()
+        {
+            byte[] testArr0 = { 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x08 };
+            var fdp = new FuzzedDataProviderCS(testArr0, false);
+            var result = fdp.ConsumeEnum<testEnum>();
+            Assert.AreEqual(4, result);
+            result = fdp.ConsumeEnum<testEnum>();
+            Assert.AreEqual(9, result);
+            result = fdp.ConsumeEnum<testEnum>();
+            Assert.AreEqual(0, result);
+            Assert.AreEqual(true, fdp.InsufficientData);
+        }
+    }
 }
