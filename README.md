@@ -19,4 +19,4 @@ Tasks:
 7. Push to ispras
 8. Write to community
 
-- [ ] sss
+- [x] sss
