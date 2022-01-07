@@ -23,6 +23,34 @@ dotnet build -a x64 FuzzedDataProviderCSTest/FuzzedDataProviderCSTest.csproj
 ```
 Also try to restart restart VSCode after rebuild (developed and tested with VSCode).
 
+### HowTo (Main commands):
+
+1. Create FuzzedDataProviderCS class instance. You must pass to the constructor an array to be parsed (mandatory property).You can instruct the instance to exit the program (and, in case of fuzzing, move to the next iteration) when all the fuzzed data was consumed, but not all concuming calls were done (arbitrary property).
+
+2. Start consuming the data using consuming functions (all public functions are self-documented):
+
+- ConsumeByte()
+- ConsumeChar()
+- ConsumeInt16()
+- ConsumeUInt16()
+- ConsumeInt32()
+- ConsumeUInt32()
+- ConsumeInt64()
+- ConsumeUInt64()
+- ConsumeDouble()
+- ConsumeDateTime()
+- ConsumeEnum()
+- ConsumeBytes()
+- ConsumeRemainingBytes()
+- ConsumeString()
+- ConsumeRemainingAsString()
+
+3. Most of the functions allows you to set a range or a set of possible values. For example:
+- you can instruct the instance to consume an Int32 in a Range [-8; 20359];
+- you can instruct the instance to consume a String where all of the symbols must belong to a Set of ['a', 'B', '8', 'Ă'];
+
+### HowTo (Example):
+
 ### Tasks:
 1. Templatize it using Generics/Abstract class.
 2. Test in DNF/Win.
