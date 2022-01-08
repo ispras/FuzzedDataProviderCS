@@ -31,7 +31,7 @@ namespace FuzzedDataProviderCSTest
             Assert.AreEqual(8, sizeof(System.Double));
         }
 
-        #region Waiting for Pose bugfix
+        #region Waiting for Pose bugfix https://github.com/tonerdo/pose/issues/69
         // Shim isLittleEndianShim = Shim.
         //     Replace(() => FuzzedDataProviderCS.IsLittleEndian).
         //     With(() => false);
