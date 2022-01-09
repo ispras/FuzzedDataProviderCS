@@ -57,7 +57,7 @@ Also try to restart restart VSCode after rebuild (developed and tested with VSCo
 
 4. When the data to be consumed is over, but you ordere the instance to consume more, insufficient bytes will be filled with 0x00 (in case of `exitAppOnInsufficientData` was set to default value `false` in instance constructor).
 
-### HowTo (Example):
+### HowTo (Quick Example):
 
 The code 
 
