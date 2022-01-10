@@ -183,7 +183,7 @@ namespace Test
 }
 ```
 
-6. Build the project, then according to [sharpfuzz usage](https://github.com/Metalnem/sharpfuzz#usage) instrument TestLib.dll (**the one in the /bin subdirectory of test console project**, not the one on the TestLib/bin!) and fuzz the code. I`ve got a crash after ~1.50 of one-core fuzzing. **Right now sharpfuzz instrumenter doesn\`t work with .NET6, so install net-sdk-5.0 just for instrumenting purpose**.
+6. Build the project, then according to [sharpfuzz usage](https://github.com/Metalnem/sharpfuzz#usage) instrument TestLib.dll (**the one in the /bin subdirectory of test console project**, not the one on the TestLib/bin!) and fuzz the code. I\`ve got a crash after ~1.50 of one-core fuzzing. **Right now sharpfuzz instrumenter doesn\`t work with .NET6, so install net-sdk-5.0 just for instrumenting purpose**.
 
 7. Open the crashing sample with a HEX-viewer and check that the data corresponds the param values of TestLib crashing function.
 
