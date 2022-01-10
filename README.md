@@ -97,8 +97,8 @@ You could see a plenty of usings and results in [UnitTest1.cs](FuzzedDataProvide
 
 ### HowTo (Full Example with Sharpfuzz):
 
-10. Read the guide and install the [sharpfuzz](https://github.com/Metalnem/sharpfuzz#installation).
-20. Create new library project `dotnet new classlib -o TestLib` and add a simple class into Program.cs, that has a public function, throwing an error in case of wrong parameter values combination.
+1. Read the guide and install the [sharpfuzz](https://github.com/Metalnem/sharpfuzz#installation).
+2. Create new library project `dotnet new classlib -o TestLib` and add a simple class into Program.cs, that has a public function, throwing an error in case of wrong parameter values combination.
 ```
 namespace TestLib;
 public class Class1
@@ -115,8 +115,8 @@ public class Class1
 
 }
 ```
-20. Create new console project for tests `dotnet new console`.
-30. Install FuzzedDataProviderCS package form nuget `dotnet add package FuzzedDataProviderCS`. Add sharpfuzz package too `dotnet add package SharpFuzz`. Add reference to the test library `dotnet add test.csproj reference TestLib/TestLib.csproj`. Your .csproj file should looks like the code below now:
+3. Create new console project for tests `dotnet new console`.
+4. Install FuzzedDataProviderCS package form nuget `dotnet add package FuzzedDataProviderCS`. Add sharpfuzz package too `dotnet add package SharpFuzz`. Add reference to the test library `dotnet add test.csproj reference TestLib/TestLib.csproj`. Your .csproj file should looks like the code below now:
 
 ```
 <Project Sdk="Microsoft.NET.Sdk">
@@ -141,7 +141,7 @@ public class Class1
 </Project>
 ```
 
-50. Add sharpfuzz wrapper and FuzzedDataProviderCS-wrapper into Program.cs.
+5. Add sharpfuzz wrapper and FuzzedDataProviderCS-wrapper into Program.cs.
 ```
 using System;
 using System.IO;
@@ -183,9 +183,9 @@ namespace Test
 }
 ```
 
-60. Build the project, then according to [sharpfuzz usage](https://github.com/Metalnem/sharpfuzz#usage) instrument TestLib.dll (the one in the /bin subdirectory of test console project, not the one on the TestLib/bin!) and fuzz the code. I`ve got a crash after ~1.50 of one-core fuzzing.
+6. Build the project, then according to [sharpfuzz usage](https://github.com/Metalnem/sharpfuzz#usage) instrument TestLib.dll (the one in the /bin subdirectory of test console project, not the one on the TestLib/bin!) and fuzz the code. I`ve got a crash after ~1.50 of one-core fuzzing.
 
-70. Open the crashing sample with a HEX-viewer and check that the data corresponds the param values of TestLib crashing function.
+7. Open the crashing sample with a HEX-viewer and check that the data corresponds the param values of TestLib crashing function.
 
 
 
