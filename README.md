@@ -173,11 +173,7 @@ namespace Test
         }
         public static void Main(string[] args)
         {
-
-            using (Stream s = new MemoryStream(new byte[3]{0x33, 0x33, 0x44}))
-            {
-                Fuzzer.Run(stream => FuzzTarget(stream)); //Using sharpfuzz Run(Action<Stream>) overload
-            }            
+            Fuzzer.Run(stream => FuzzTarget(stream)); //Using sharpfuzz Run(Action<Stream>) overload                     
         }
     }
 }
