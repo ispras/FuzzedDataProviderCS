@@ -16,7 +16,7 @@ Made for using with C#-fuzzers [like sharpfuzz](https://github.com/Metalnem/shar
 
 Install:
 - as sources to be built (`git clone https://github.com/ispras/FuzzedDataProviderCS`);
-- as a **nuget `dotnet add package FuzzedDataProviderCS`**).
+- as a **nuget `dotnet add package FuzzedDataProviderCS`**.
 
 Ubuntu 20.04, install [.NET 6], (https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#2004-), then build from sources and test it:
 
