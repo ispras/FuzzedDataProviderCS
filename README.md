@@ -187,7 +187,8 @@ namespace Test
 
 
 ### Tasks:
-1. Templatize it using Generics/Abstract class.
-2. Test in DNF/Win.
-3. Make shims and test for another encoding order (need fix for Pose library https://github.com/tonerdo/pose/issues/69).
-4. Add Array/List consumers.
+- [x] Add HowToes
+- [ ] Templatize it using Generics/Abstract class.
+- [ ] Test in DNF/Win.
+- [ ] Make shims and test for another encoding order (need fix for Pose library https://github.com/tonerdo/pose/issues/69).
+- [ ] Add Array/List consumers.
