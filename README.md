@@ -168,7 +168,7 @@ namespace Test
                     length : v3_len, new HashSet<char>() { '5', '+', 'W', 'X', 'A' });
                 var v4 = fdp.ConsumeDateTime();
                 
-                TestNS_.TestClass_.BadFunction(v1, v2, v3, v4);
+                TestLib.Class1.BadFunction(v1, v2, v3, v4);
             }
         }
         public static void Main(string[] args)
