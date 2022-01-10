@@ -383,8 +383,12 @@ namespace FuzzedDataProviderCSLibrary
                 sizeof(Byte) * (Int32)length;
 
             var result = new Byte[step];
-            Array.Copy(_data, _offset, result, 0,
-                CheckIfEnoughData(step) ? step : _data.Length - _offset);
+            var enough = CheckIfEnoughData(step);
+            if (_offset>=_length)
+                return result;
+            else
+                Array.Copy(_data, _offset, result, 0,
+                    enough ? step : _data.Length - _offset);
             Advance(step);
             if (min != byte.MinValue || max != Byte.MaxValue)
                 for (int i = 0; i < result.Length; i++)

@@ -7,12 +7,14 @@
     <Nullable>enable</Nullable>
 
     <PackageId>FuzzedDataProviderCS</PackageId>
-    <Version>1.1.3</Version>    
+    <Version>1.1.7</Version>    
     <Authors>Dmitry_Ponomarev(Telegram:DmitryJustDmitry)</Authors>
     <Company>ISP RAS__Fobos-NT</Company>
     <PackageTags>fuzzing;wrapper;csharp;structure;structure-aware</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>FuzzedDataProvider for C#, inspired by Google's FuzzedDataProvider.</Description>
+    <PackageProjectUrl>https://github.com/ispras/FuzzedDataProviderCS</PackageProjectUrl>
+    <license>MIT</license>
   </PropertyGroup>
 
 </Project>

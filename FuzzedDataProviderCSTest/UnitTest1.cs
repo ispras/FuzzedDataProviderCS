@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using FuzzedDataProviderCSLibrary;
+using System.IO;
 
 namespace FuzzedDataProviderCSTest
 {
@@ -505,6 +506,14 @@ namespace FuzzedDataProviderCSTest
             result = fdp.ConsumeRemainingAsString(new HashSet<char>() { '\u0043', '\x0044', '\x45' });
             Assert.AreEqual("CECC", result);
             Assert.AreEqual(false, fdp.InsufficientData);
+
+            fdp = new FuzzedDataProviderCS(testArr0, false);
+            result = fdp.ConsumeString(length: 0);
+            Assert.AreEqual(String.Empty, result);
+            Assert.AreEqual(true, fdp.InsufficientData);
+            result = fdp.ConsumeString(length: 0);
+            Assert.AreEqual(String.Empty, result);
+            Assert.AreEqual(true, fdp.InsufficientData);
         }
 
         enum testEnum
@@ -530,13 +539,14 @@ namespace FuzzedDataProviderCSTest
         }
 
         [TestMethod]
-        public void TestConsumeDateTime()        {
+        public void TestConsumeDateTime()
+        {
             byte[] testArr0 = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             byte[] testArr1 = { 0x2b, 0xca, 0x28, 0x75, 0xf4, 0x37, 0x3f, 0xff };
             byte[] testArr2 = { 0x7F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
             byte[] testArr3 = { 0x11, 0x03, 0x08, 0x30, 0x0A, 0x50, 0x0B, 0x0C };
             byte[] testArr4 = { 0x20, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00 };
-            
+
             var fdp = new FuzzedDataProviderCS(testArr0, false);
             var result = fdp.ConsumeDateTime();
             Assert.AreEqual(DateTime.MinValue, result);
@@ -546,38 +556,62 @@ namespace FuzzedDataProviderCSTest
             result = fdp.ConsumeDateTime();
             Assert.AreEqual(DateTime.MaxValue, result);
             Assert.AreEqual(false, fdp.InsufficientData);
-            
+
             fdp = new FuzzedDataProviderCS(testArr2, false);
             result = fdp.ConsumeDateTime(
-                min : new DateTime(1992, 1, 5), max : new DateTime(2020, 2, 3));
+                min: new DateTime(1992, 1, 5), max: new DateTime(2020, 2, 3));
             Assert.AreEqual(result.Year, 2016);
             Assert.AreEqual(false, fdp.InsufficientData);
 
             fdp = new FuzzedDataProviderCS(testArr3, false);
             result = fdp.ConsumeDateTime(
-                min : new DateTime(1992, 1, 5), max : new DateTime(2020, 2, 3));
+                min: new DateTime(1992, 1, 5), max: new DateTime(2020, 2, 3));
             Assert.AreEqual(result.Year, 2001);
             Assert.AreEqual(false, fdp.InsufficientData);
-           
+
             fdp = new FuzzedDataProviderCS(testArr4, false);
             result = fdp.ConsumeDateTime(
-                min : new DateTime(1992, 1, 5), max : new DateTime(2020, 2, 3));
+                min: new DateTime(1992, 1, 5), max: new DateTime(2020, 2, 3));
             Assert.AreEqual(result.Year, 1998);
             Assert.AreEqual(true, fdp.InsufficientData);
 
             fdp = new FuzzedDataProviderCS(testArr1, false);
             result = fdp.ConsumeDateTime(
-                min : new DateTime(1992, 1, 5), max : new DateTime(2020, 2, 3));
+                min: new DateTime(1992, 1, 5), max: new DateTime(2020, 2, 3));
             Assert.AreEqual(result.Year, 1994);
             Assert.AreEqual(false, fdp.InsufficientData);
 
             fdp = new FuzzedDataProviderCS(testArr0, false);
             result = fdp.ConsumeDateTime(
-                min : new DateTime(1992, 1, 5), max : new DateTime(2020, 2, 3));
+                min: new DateTime(1992, 1, 5), max: new DateTime(2020, 2, 3));
             Assert.AreEqual(result.Year, 1992);
             Assert.AreEqual(false, fdp.InsufficientData);
         }
-    
-      
+
+        [TestMethod]
+        public void TestComplex()
+        {
+            {
+                byte[] testArr0 = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+                using (Stream s = new MemoryStream(new byte[3] { 0x33, 0x33, 0x44 }))
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        s.CopyTo(ms);
+                        var fdp = new FuzzedDataProviderCS(
+                            ms.ToArray(), exitAppOnInsufficientData: false);
+
+                        var v1 = fdp.ConsumeUInt16();
+                        var v2 = fdp.ConsumeBytes(3);
+                        var v3_len = fdp.ConsumeByte();
+                        var v3 = fdp.ConsumeString(
+                            length: v3_len, new HashSet<char>() { '5', '+', 'W', 'X', 'A' });
+                        var v4 = fdp.ConsumeDateTime();
+
+                        Assert.IsTrue(string.IsNullOrEmpty(v3));
+                    }
+                }
+            }
+        }
     }
 }

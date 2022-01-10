@@ -95,6 +95,101 @@ resultDT: {1/1/0001 12:00:00 AM} //Smallest possible DateTime
 
 You could see a plenty of usings and results in [UnitTest1.cs](FuzzedDataProviderCSTest/UnitTest1.cs). 
 
+### HowTo (Full Example with Sharpfuzz):
+
+10. Read the guide and install the [sharpfuzz](https://github.com/Metalnem/sharpfuzz#installation).
+20. Create new library project `dotnet new classlib -o TestLib` and add a simple class into Program.cs, that has a public function, throwing an error in case of wrong parameter values combination.
+```
+namespace TestLib;
+public class Class1
+{
+    public static void BadFunction(UInt16 v1, Byte[] v2, String v3, DateTime v4)
+    {
+        if (v2[1]==0xFA)
+            if (v1==0x1013)
+                if (v3.Length == 4)
+                    if (v3[2] == 'W')
+                        if (v4.DayOfWeek == DayOfWeek.Friday)
+                            throw new Exception();
+    }
+
+}
+```
+20. Create new console project for tests `dotnet new console`.
+30. Install FuzzedDataProviderCS package form nuget `dotnet add package FuzzedDataProviderCS`. Add sharpfuzz package too `dotnet add package SharpFuzz`. Add reference to the test library `dotnet add test.csproj reference TestLib/TestLib.csproj`. Your .csproj file should looks like the code below now:
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>false</ImplicitUsings>
+    <Nullable>enable</Nullable>    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FuzzedDataProviderCS" Version="1.1.7" />
+    <PackageReference Include="SharpFuzz" Version="1.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>    
+    <ProjectReference Include="..\TestLib\TestLib.csproj" />
+  </ItemGroup>
+
+</Project>
+```
+
+50. Add sharpfuzz wrapper and FuzzedDataProviderCS-wrapper into Program.cs.
+```
+using System;
+using System.IO;
+using SharpFuzz;
+using FuzzedDataProviderCSLibrary;
+using System.Collections.Generic;
+
+namespace Test
+{
+    public class Program
+    {
+        private static void FuzzTarget(Stream input)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                input.CopyTo(ms);
+                var fdp = new FuzzedDataProviderCS(
+                    ms.ToArray(), exitAppOnInsufficientData: false);
+
+                var v1 = fdp.ConsumeUInt16();
+                var v2 = fdp.ConsumeBytes(3);
+                var v3_len = fdp.ConsumeByte();
+                var v3 = fdp.ConsumeString(
+                    length : v3_len, new HashSet<char>() { '5', '+', 'W', 'X', 'A' });
+                var v4 = fdp.ConsumeDateTime();
+                
+                TestNS_.TestClass_.BadFunction(v1, v2, v3, v4);
+            }
+        }
+        public static void Main(string[] args)
+        {
+
+            using (Stream s = new MemoryStream(new byte[3]{0x33, 0x33, 0x44}))
+            {
+                Fuzzer.Run(stream => FuzzTarget(stream)); //Using sharpfuzz Run(Action<Stream>) overload
+            }            
+        }
+    }
+}
+```
+
+60. Build the project, then according to [sharpfuzz usage](https://github.com/Metalnem/sharpfuzz#usage) instrument TestLib.dll (the one in the /bin subdirectory of test console project, not the one on the TestLib/bin!) and fuzz the code. I`ve got a crash after ~1.50 of one-core fuzzing.
+
+70. Open the crashing sample with a HEX-viewer and check that the data corresponds the param values of TestLib crashing function.
+
+
+
+
 ### Tasks:
 1. Templatize it using Generics/Abstract class.
 2. Test in DNF/Win.
